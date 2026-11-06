@@ -26,7 +26,7 @@ The tool is largely inspired by the well known [_Automatic Pattern Generator_](h
 Every key is listed under [Tools and shortcuts](#tools-and-shortcuts).
 
 ## Your local copy
-If you prefer to have a local copy, you can download it directly [here](https://github.com/mgarbellini/framebag-pattern/archive/refs/heads/master.zip). Unzip it and open `index.html` with the browser. The logo at the top left and the icon in the browser tab can be replaced with your own logo. The logo files are located in the `img` folder.
+If you prefer to have a local copy, you can download it directly [here](https://github.com/mgarbellini/framebag-pattern/archive/refs/heads/main.zip). Unzip it and open `index.html` with the browser. The logo at the top left and the icon in the browser tab can be replaced with your own logo. The logo files are located in the `img` folder.
 
 ## Licence
 
