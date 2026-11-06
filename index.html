@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Framebag Pattern</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="img/logo-tab.png">
+<link rel="stylesheet" href="css/style.css?v=1.0">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-project">
+    <button type="button" class="logo-btn" id="btn-file" aria-haspopup="menu" aria-expanded="false" aria-controls="file-menu" title="File: new, open, save, photo, clear outline"><img class="logo" id="logo" src="img/logo.png" alt="File menu" height="24"><span class="logo-text" id="logo-text" hidden>File</span><span class="caret" aria-hidden="true">▾</span></button>
+    <input id="project-name" class="project-name" type="text" spellcheck="false" autocomplete="off" placeholder="Untitled project" aria-label="Project name">
+  </div>
+  <nav class="modes" aria-label="Steps">
+    <button type="button" class="mode" data-mode="trace" aria-pressed="true" title="Trace the frame: photo, scale, outline, offsets and corners"><span class="num">01</span>Trace</button>
+    <button type="button" class="mode" data-mode="design" aria-pressed="false" title="Design the bag: seam allowance, gusset, notches, straps and bolt holes, split line (D)"><span class="num">02</span>Design</button>
+  </nav>
+  <div class="tb-actions">
+    <button type="button" class="tb-btn" data-action="undo" title="Undo (⌘Z)">Undo</button>
+    <button type="button" class="tb-btn" data-action="redo" title="Redo (⇧⌘Z)">Redo</button>
+    <div class="split">
+      <button type="button" class="btn-primary" data-action="export" id="btn-export" title="Export the pattern as PDF (⌘E)">Export PDF</button>
+      <button type="button" class="btn-primary icon" id="btn-print-settings" aria-haspopup="dialog" aria-expanded="false" aria-controls="print-pop" title="Print settings"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M13.26 6.39 L15.29 6.72 L15.29 9.28 L13.26 9.61 L12.86 10.58 L14.06 12.24 L12.24 14.06 L10.58 12.86 L9.61 13.26 L9.28 15.29 L6.72 15.29 L6.39 13.26 L5.42 12.86 L3.76 14.06 L1.94 12.24 L3.14 10.58 L2.74 9.61 L0.71 9.28 L0.71 6.72 L2.74 6.39 L3.14 5.42 L1.94 3.76 L3.76 1.94 L5.42 3.14 L6.39 2.74 L6.72 0.71 L9.28 0.71 L9.61 2.74 L10.58 3.14 L12.24 1.94 L14.06 3.76 L12.86 5.42 Z M10.50 8.00 A2.50 2.50 0 1 0 5.50 8.00 A2.50 2.50 0 1 0 10.50 8.00 Z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div id="file-menu" class="ctx file-menu" role="menu" aria-label="File" hidden>
+  <button type="button" class="ctx-item" role="menuitem" data-action="new"><span>New project</span></button>
+  <button type="button" class="ctx-item" role="menuitem" data-action="open"><span>Open…</span><kbd>⌘O</kbd></button>
+  <button type="button" class="ctx-item" role="menuitem" data-action="save"><span>Save</span><kbd>⌘S</kbd></button>
+  <div class="ctx-sep" role="separator"></div>
+  <button type="button" class="ctx-item" role="menuitem" data-action="load-photo" id="btn-photo"><span id="btn-photo-label">Load photo…</span></button>
+  <button type="button" class="ctx-item" role="menuitem" data-action="level-photo" id="btn-level"><span>Level photo…</span></button>
+  <div class="ctx-sep" role="separator"></div>
+  <div class="ctx-row" role="group" aria-label="Units"><span>Units</span><span class="seg"><button type="button" role="menuitemradio" aria-checked="true" data-units="metric" title="Show and type lengths in millimetres">mm</button><button type="button" role="menuitemradio" aria-checked="false" data-units="imperial" title="Show and type lengths in inches, to the nearest 1/16 in">in</button></span></div>
+  <button type="button" class="ctx-item" role="menuitem" data-action="fullscreen" id="btn-fullscreen"><span id="btn-fullscreen-label">Full screen</span><kbd>F</kbd></button>
+  <div class="ctx-sep" role="separator"></div>
+  <button type="button" class="ctx-item" role="menuitem" data-action="clear-outline" id="btn-clear-outline"><span>Clear outline</span></button>
+  <button type="button" class="ctx-item" role="menuitem" data-action="clear-guides" id="btn-clear-guides"><span>Clear guides</span></button>
+</div>
+
+<div id="print-pop" class="print-pop" role="dialog" aria-label="Print settings" hidden>
+  <h3>Print settings</h3>
+  <div class="row"><label class="lbl" for="print-paper">Paper</label><select id="print-paper" class="select paper" title="Sheets larger than A3 or Tabloid are for a copy shop; each gets its own check square"></select></div>
+  <div class="row"><label class="lbl" for="print-margin">Margin</label><span class="field"><input id="print-margin" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+  <div class="row"><label class="lbl" for="print-overlap">Overlap</label><span class="field"><input id="print-overlap" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+  <div class="toggles">
+    <label class="check"><input type="checkbox" data-print="optimiseLayout"><span>Optimise layout</span></label>
+    <label class="check"><input type="checkbox" data-print="showTraced"><span>Include traced outline</span></label>
+    <label class="check"><input type="checkbox" data-print="showLengths"><span>Include edge lengths</span></label>
+    <label class="check"><input type="checkbox" data-print="showLabel"><span>Include pattern label</span></label>
+  </div>
+  <div class="pp-group" id="pp-label">
+    <h4>Pattern label</h4>
+    <div class="row"><label class="lbl" for="label-piece">Piece</label><input id="label-piece" class="text-in" type="text" autocomplete="off" spellcheck="false" placeholder="Side panel"></div>
+    <div class="row"><label class="lbl" for="label-side">Side</label><select id="label-side" class="select" title="The side of the bike the photo shows. The label names it, with an arrow to the front of the bike.">
+      <option value="">Not marked</option>
+      <option value="drive">Drive side</option>
+      <option value="nondrive">Non-drive side</option>
+    </select></div>
+    <div class="row"><label class="lbl" for="label-note">Note</label><input id="label-note" class="text-in" type="text" autocomplete="off" placeholder="Bike, size, zip side…"></div>
+  </div>
+  <div class="pp-info">
+    <div class="row"><span class="lbl">Pages</span><span class="val" id="print-pages">—</span></div>
+    <div class="row"><span class="lbl">Layout</span><span class="val" id="print-layout">—</span></div>
+  </div>
+  <p class="hint" id="export-reason"></p>
+  <div class="row buttons"><button type="button" class="btn" data-action="print-defaults" id="btn-print-defaults">Reset to defaults</button></div>
+</div>
+
+<main class="main">
+  <section id="stage" class="stage no-image" aria-label="Canvas">
+    <svg id="canvas" class="canvas" xmlns="http://www.w3.org/2000/svg">
+      <image id="photo" x="0" y="0" preserveAspectRatio="none"></image>
+      <g id="layer-draw"></g>
+      <g id="layer-cursor"></g>
+    </svg>
+    <canvas id="loupe" class="loupe" hidden></canvas>
+
+    <div id="empty" class="empty">
+      <h1>Load a photo of the bike</h1>
+      <p>Take it square-on to the frame, with a ruler or tape measure held flat against the tubes. Its markings set the scale.</p>
+      <button type="button" class="btn-primary" data-action="load-photo">Load photo…</button>
+      <p class="empty-alt">Or drop a photo or a saved project onto this window.</p>
+    </div>
+
+    <div id="scale-pop" class="pop" hidden>
+      <label for="scale-pop-input">Reference length</label>
+      <span class="field"><input id="scale-pop-input" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span>
+      <button type="button" id="scale-pop-set" class="btn-primary small">Set</button>
+    </div>
+
+    <div id="ctx-menu" class="ctx" role="menu" hidden></div>
+
+    <div id="restore" class="restore" hidden>
+      <span id="restore-text">A previous session was found.</span>
+      <button type="button" class="tb-btn" data-action="restore">Restore</button>
+      <button type="button" class="tb-btn" data-action="discard">Discard</button>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </section>
+
+  <aside id="inspector" class="inspector" aria-label="Pattern settings">
+
+   <div class="panel" id="panel-trace">
+    <section class="sec" id="sec-offset">
+      <h2><span class="num">01</span>Offset</h2>
+      <div class="body">
+        <div class="row"><label class="lbl" for="uniform-offset">Uniform<small>− smaller, + larger</small></label><span class="field"><input id="uniform-offset" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+        <div class="row"><span class="lbl edge-pick"><label for="edge-select">Edge</label><select id="edge-select" class="select"></select></span><span class="field"><input id="edge-offset" class="num-in" type="text" inputmode="decimal" autocomplete="off" aria-label="Offset of the chosen edge"><span class="unit">mm</span></span></div>
+        <p class="hint small" id="edge-overrides"></p>
+        <div class="msgs" id="offset-msgs"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-selection">
+      <h2><span class="num">02</span><span id="sel-title">Selection</span></h2>
+      <div class="body">
+        <p class="hint" id="sel-empty">Select a point or an edge on the canvas, or choose an edge above.</p>
+        <div id="sel-corner" hidden>
+          <div class="row" id="corner-angle-row"><span class="lbl">Inside angle</span><span class="val" id="corner-angle">—</span></div>
+          <div class="row" id="corner-row"><label class="lbl" for="corner-radius">Corner radius</label><span class="field"><input id="corner-radius" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+          <p class="hint" id="smooth-note" hidden>The outline runs through this point without a kink.</p>
+          <div class="msgs" id="corner-msgs"></div>
+          <div class="row buttons">
+            <button type="button" class="btn" data-action="toggle-smooth" id="btn-smooth" title="Smooth: the outline keeps its direction through the point, for curved tubes">Make smooth</button>
+            <button type="button" class="btn" data-action="radius-all" id="btn-radius-all">Apply to all corners</button>
+            <button type="button" class="btn" data-action="delete-point" id="btn-delete-point" title="Delete the selected point (Delete)">Delete point</button>
+          </div>
+        </div>
+        <div id="sel-edge" hidden>
+          <div class="row"><label class="lbl" for="edge-name">Name</label><input id="edge-name" class="text-in" type="text" autocomplete="off" spellcheck="false" title="Any name, such as Top tube; shown instead of the corner letters"></div>
+          <div class="row"><span class="lbl">Traced length</span><span class="val" id="edge-traced">—</span></div>
+          <div class="row"><span class="lbl">Finished length</span><span class="val" id="edge-finished">—</span></div>
+          <div class="row buttons"><button type="button" class="btn" data-action="toggle-curve" id="btn-curve">Make curved</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-pattern">
+      <h2><span class="num">03</span>Outline</h2>
+      <div class="body">
+        <p class="hint" id="outline-empty">Trace the inside of the frame with Trace (T). Click the first point to close the outline.</p>
+        <div class="row"><span class="lbl">Perimeter, finished</span><span class="val" id="perimeter">—</span></div>
+        <div class="row"><span class="lbl">Size, finished</span><span class="val" id="finished-size">—</span></div>
+        <div class="msgs" id="outline-msgs"></div>
+      </div>
+    </section>
+   </div>
+
+   <div class="panel" id="panel-design" hidden>
+    <p class="hint design-empty" id="design-empty">Finish 01 Trace first: close the outline and set the scale.</p>
+
+    <section class="sec" id="sec-seam">
+      <h2><span class="num">01</span>Seam allowance</h2>
+      <div class="body">
+        <div class="row" title="Added outside the stitch line, on the side panels and on the gusset"><label class="lbl" for="seam-allowance">Width</label><span class="field"><input id="seam-allowance" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+        <div class="row"><span class="lbl" id="cut-size-lbl">Side panel, cut</span><span class="val" id="cut-size">—</span></div>
+        <div class="msgs" id="seam-msgs"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-gusset">
+      <h2><span class="num">02</span>Gusset</h2>
+      <div class="body">
+        <div class="row"><label class="lbl" for="gusset-width">Width<small>finished, seam to seam</small></label><span class="field"><input id="gusset-width" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+        <div class="row"><label class="lbl" for="gusset-join">Ends meet at</label><select id="gusset-join" class="select" title="Where the strip's two ends are sewn together: a double notch on the side panels. Drag it along the stitch line to put it between corners."></select></div>
+        <div class="strip" id="gusset-strip" aria-label="The gusset, with its notches"></div>
+        <div class="row" id="gusset-size-row" title=""><span class="lbl">Strip, cut</span><span class="val" id="gusset-size">—</span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-notches">
+      <h2><span class="num">03</span>Notches</h2>
+      <div class="body">
+        <div class="toggles"><label class="check"><input type="checkbox" id="notch-corners"><span>At every corner</span><span class="val count" id="notch-count"></span></label></div>
+        <div class="row"><label class="lbl" for="notch-spacing">Between corners<small id="notch-between">evenly, about every</small></label><span class="field"><input id="notch-spacing" class="num-in" type="text" inputmode="decimal" autocomplete="off" placeholder="none"><span class="unit">mm</span></span></div>
+      </div>
+    </section>
+
+    <section class="sec" id="sec-dsel">
+      <h2><span class="num">04</span><span id="dsel-title">Selection</span></h2>
+      <div class="body">
+        <p class="hint" id="dsel-empty">Click the stitch line to add a notch, a strap or bolt holes there. Split (K) draws a line across the panel.</p>
+        <div id="dsel-run" hidden>
+          <div class="row" title="Along the stitch line, from notch to notch"><span class="lbl">Length</span><span class="val" id="dsel-len">—</span></div>
+          <div class="row buttons">
+            <button type="button" class="btn" data-add="notch" title="A notch at the spot: a match point on the side panels and the gusset">+ Notch</button>
+            <button type="button" class="btn" data-add="strap" title="A strap round the tube, sewn to the gusset at the spot">+ Strap</button>
+            <button type="button" class="btn" data-add="bolts" title="Holes in the gusset for bolts into the frame's bottle bosses">+ Bolt holes</button>
+            <button type="button" class="btn" data-add="join" title="The strip's ends meet at the spot">Ends meet here</button>
+          </div>
+        </div>
+        <div id="dsel-mark" hidden>
+          <div class="row"><label class="lbl" for="mark-from"><span id="mark-from-lbl">From</span><small id="mark-to"></small></label><span class="field"><input id="mark-from" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+          <div class="row" id="mark-width-row"><label class="lbl" for="mark-width">Width</label><span class="field"><input id="mark-width" class="num-in" type="text" inputmode="decimal" autocomplete="off"><span class="unit">mm</span></span></div>
+          <div class="row" id="mark-holes-row" title="How many holes, and how far apart their centres are. Bottle bosses are 64 mm apart."><label class="lbl" for="mark-holes">Holes</label><span class="field"><select id="mark-holes" class="select count"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><span class="times">×</span><input id="mark-spacing" class="num-in" type="text" inputmode="decimal" autocomplete="off" aria-label="Apart, centre to centre"><span class="unit">mm</span></span></div>
+          <div class="row buttons" id="mark-buttons"><button type="button" class="btn" id="btn-delete-mark" title="Delete (Delete)">Delete</button></div>
+        </div>
+        <div id="dsel-split" hidden>
+          <div class="row"><label class="lbl" for="split-keep">Keep</label><select id="split-keep" class="select"></select></div>
+          <div class="row"><span class="lbl">Length</span><span class="val" id="split-len">—</span></div>
+          <div class="row buttons"><button type="button" class="btn" id="btn-delete-split" title="Delete (Delete)">Delete split line</button></div>
+        </div>
+      </div>
+    </section>
+   </div>
+
+  </aside>
+</main>
+
+<footer class="bottom">
+  <div class="cmdline">
+    <span id="st-hint" class="cmd-hint" aria-live="polite"></span>
+    <span id="st-warn" class="cmd-warn"></span>
+    <nav class="cmd-tools" aria-label="Tools">
+      <button type="button" class="tool" data-tool="select" title="Select and move points (V)">Select<kbd>V</kbd></button>
+      <button type="button" class="tool" data-tool="trace" title="Place points along the frame (T)">Trace<kbd>T</kbd></button>
+      <button type="button" class="tool" data-tool="guide" title="Draw a guide line through two points (G)">Guide<kbd>G</kbd></button>
+      <button type="button" class="tool" data-tool="split" title="Draw a line across the panel to split it, or to clip it (K)">Split<kbd>K</kbd></button>
+      <button type="button" class="tool" data-tool="measure" title="Measure a distance (M)">Measure<kbd>M</kbd></button>
+      <button type="button" class="tg" data-display="snap" aria-pressed="true" title="Snap to guides, intersections and perpendiculars. Hold ⌘ to place freely."><span class="sq"></span>Snap</button>
+    </nav>
+  </div>
+  <div class="statusbar">
+    <div class="sb-group sb-photo" id="sb-photo">
+      <button type="button" class="tg" data-display="photo" aria-pressed="true" id="tg-photo"><span class="sq"></span>Photo</button>
+      <input type="range" id="img-opacity" min="0" max="100" step="5" aria-label="Photo opacity">
+      <span id="img-opacity-val" class="opacity-val">80 %</span>
+    </div>
+    <div class="sb-group sb-scale" id="sb-scale">
+      <button type="button" class="sb-tool" data-tool="scale" title="Scale tool: drag along the reference, then enter its real length (S)">Scale<kbd>S</kbd></button>
+      <span class="field"><input id="scale-length" class="num-in" type="text" inputmode="decimal" autocomplete="off" aria-label="Reference length in mm"><span class="unit">mm</span></span>
+      <span id="st-res" class="st-res"></span>
+      <button type="button" class="sb-link" data-action="reset-scale" id="btn-reset-scale" title="Remove the scale line and set the scale again" hidden>Reset</button>
+    </div>
+    <div class="sb-group sb-toggles" role="group" aria-label="Show on the canvas">
+      <button type="button" class="tg" data-display="traced" aria-pressed="true" title="Traced outline"><span class="sq"></span>Traced</button>
+      <button type="button" class="tg" data-display="finished" aria-pressed="true" title="Finished outline (stitch line)"><span class="sq"></span>Finished</button>
+      <button type="button" class="tg" data-display="cut" aria-pressed="true" title="Cut line"><span class="sq"></span>Cut line</button>
+      <button type="button" class="tg" data-display="labels" aria-pressed="true" title="Point letters and edge names"><span class="sq"></span>Labels</button>
+      <button type="button" class="tg" data-display="lengths" aria-pressed="true" title="Edge lengths"><span class="sq"></span>Lengths</button>
+      <button type="button" class="tg" data-display="angles" aria-pressed="true" title="Inside angles at the corners"><span class="sq"></span>Angles</button>
+      <button type="button" class="tg" data-display="guides" aria-pressed="true" title="Guide lines"><span class="sq"></span>Guides</button>
+      <button type="button" class="tg" data-display="scale" aria-pressed="true" title="Scale line"><span class="sq"></span>Scale line</button>
+      <button type="button" class="tg" data-display="loupeAlways" aria-pressed="false" title="Keep the loupe on while hovering (L)"><span class="sq"></span>Loupe<kbd>L</kbd></button>
+    </div>
+  </div>
+</footer>
+
+<div class="small-screen" id="small-screen" role="dialog" aria-modal="true" aria-labelledby="small-screen-title">
+  <div class="small-screen-box">
+    <p class="small-screen-kicker">Framebag Pattern</p>
+    <h2 id="small-screen-title">Made for a computer</h2>
+    <p>The tool needs a window of at least 1280 × 700 pixels, with a mouse or a trackpad and a keyboard. On a phone, or in a small window, its panels do not fit.</p>
+    <p>Open it on a computer, or make the window larger.</p>
+    <button type="button" class="btn-primary" id="small-screen-ok">Continue anyway</button>
+  </div>
+</div>
+
+<input type="file" id="file-photo" accept="image/*" hidden>
+<input type="file" id="file-project" accept=".json,application/json" hidden>
+
+<script src="js/platform.js?v=1.0"></script>
+<script src="js/geometry.js?v=1.0"></script>
+<script src="js/design.js?v=1.0"></script>
+<script src="js/units.js?v=1.0"></script>
+<script src="js/state.js?v=1.0"></script>
+<script src="js/project.js?v=1.0"></script>
+<script src="js/pdfwriter.js?v=1.0"></script>
+<script src="js/pdf.js?v=1.0"></script>
+<script src="js/editor.js?v=1.0"></script>
+<script src="js/inspector.js?v=1.0"></script>
+<script src="js/statusbar.js?v=1.0"></script>
+<script src="js/printsettings.js?v=1.0"></script>
+<script src="js/app.js?v=1.0"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Geometry tests — Framebag Pattern</title>
+<style>
+  body { font: 13px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 32px; color: #000; max-width: 760px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sum { margin: 0 0 24px; color: #6b6b6b; font-variant-numeric: tabular-nums; }
+  .sum.fail { color: #e2001a; }
+  ol { padding: 0; list-style: none; border-top: 1px solid #000; margin: 0; }
+  li { display: grid; grid-template-columns: 48px 1fr; padding: 6px 0; border-bottom: 1px solid #d9d9d9; }
+  .st { font-weight: 700; }
+  .fail .st, .err { color: #e2001a; }
+  .err { grid-column: 2; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>Geometry tests</h1>
+<p class="sum" id="sum">Running…</p>
+<ol id="list"></ol>
+<script src="../js/platform.js"></script>
+<script src="../js/geometry.js"></script>
+<script src="../js/design.js"></script>
+<script src="../js/units.js"></script>
+<script src="../js/state.js"></script>
+<script src="../js/project.js"></script>
+<script src="../js/pdfwriter.js"></script>
+<script src="../js/pdf.js"></script>
+<script src="geometry-tests.js"></script>
+<script>
+  (function () {
+    var r = window.FBTests.run();
+    var sum = document.getElementById('sum');
+    sum.textContent = r.passed + ' passed, ' + r.failed + ' failed';
+    if (r.failed) sum.className = 'sum fail';
+    var list = document.getElementById('list');
+    r.results.forEach(function (t) {
+      var li = document.createElement('li');
+      li.className = t.pass ? 'pass' : 'fail';
+      var st = document.createElement('span');
+      st.className = 'st';
+      st.textContent = t.pass ? 'Pass' : 'Fail';
+      var nm = document.createElement('span');
+      nm.textContent = t.name;
+      li.appendChild(st);
+      li.appendChild(nm);
+      if (t.error) {
+        var er = document.createElement('span');
+        er.className = 'err';
+        er.textContent = t.error;
+        li.appendChild(er);
+      }
+      list.appendChild(li);
+    });
+  })();
+</script>
+</body>
+</html>
